@@ -43,10 +43,7 @@ fn get_key_from_file(provider: &str, filename: &str) -> String {
 }
 
 pub fn get_current_provider() -> String {
-    let contents = fs::read_to_string(PROVIDER_STORAGE)
-        .expect("No current provider found. Please run `configure`");
-
-    contents
+    fs::read_to_string(PROVIDER_STORAGE).expect("No current provider found. Please run `configure`")
 }
 
 pub fn set_current_provider(provider: &str) {
@@ -57,8 +54,8 @@ pub fn set_current_provider(provider: &str) {
         .open(PROVIDER_STORAGE)
         .expect("Create failed");
 
-    let to_write = format!("{provider}");
-    file.write_all(to_write.as_bytes()).expect("Write failed");
+    file.write_all(provider.to_string().as_bytes())
+        .expect("Write failed");
 }
 
 #[cfg(test)]
