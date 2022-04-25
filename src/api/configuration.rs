@@ -3,6 +3,7 @@ use std::io::Write;
 use text_io::read;
 
 const STORAGE: &str = "api_keys.txt";
+const PROVIDER_STORAGE: &str = "current_provider.txt";
 
 pub fn add_api_key(provider: &str) {
     println!("Please, share your api key for this provider: ");
@@ -39,6 +40,25 @@ fn get_key_from_file(provider: &str, filename: &str) -> String {
         .find(|line: &Vec<&str>| line[0] == provider)
         .expect("No such provider")[1]
         .to_string()
+}
+
+pub fn get_current_provider() -> String {
+    let contents = fs::read_to_string(PROVIDER_STORAGE)
+        .expect("No current provider found. Please run `configure`");
+
+    contents
+}
+
+pub fn set_current_provider(provider: &str) {
+    let mut file = fs::OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .create(true)
+        .open(PROVIDER_STORAGE)
+        .expect("Create failed");
+
+    let to_write = format!("{provider}");
+    file.write_all(to_write.as_bytes()).expect("Write failed");
 }
 
 #[cfg(test)]
